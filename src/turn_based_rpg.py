@@ -36,6 +36,8 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Turn-based RPG")
 
+    player = Player()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -44,6 +46,7 @@ def main():
 
         battle_num = 1
         while battle_num == 1:
+            enemy = Enemy(health=30, attack=10, defense=10, speed=50)
             # ask for player input
             player_move = int(input("Choose your move: [1] Attack"))
             # calculate enemy move
