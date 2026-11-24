@@ -83,7 +83,10 @@ def main():
             in_action = True
             turn_count = 0
 
-
+        # item button conditional
+        # remove one item from player's item count
+        # heal player health
+        # if player health is over max health, set health to max health (100)
 
 
         pygame.display.flip()
