@@ -15,8 +15,19 @@ class Button():
         self.image = image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+        self.clicked = False
 
     def draw(self, surface):
+        # get mouse position
+        mouse_pos = pygame.mouse.get_pos()
+        # check mouseover and clicked conditions
+        if self.rect.collidepoint(mouse_pos):
+            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+                self.clicked = True
+                print('CLICKED')
+        if pygame.mouse.get_pressed()[0] == 0:
+            self.clicked = False
+
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
 
@@ -128,7 +139,9 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        battle(player)    
+        fight_button.draw(screen)
+
+        #battle(player)    
 
         pygame.display.flip()
         clock.tick(60)
