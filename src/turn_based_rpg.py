@@ -124,6 +124,10 @@ def main():
 
         if player.health <= 0:
             print("you lose")
+        if enemy.health <= 0:
+            print("increase difficulty")
+            stage += 1
+            enemy = Enemy(difficulty=stage)
 
         pygame.display.flip()
         clock.tick(60)
