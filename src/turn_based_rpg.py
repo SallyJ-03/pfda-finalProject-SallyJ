@@ -29,6 +29,7 @@ class Enemy(Entity):
         super().__init__(health, attack, defense, speed)
         self.difficulty = difficulty
 
+
 def choose_enemy_move(diff):
     move_chance = random.randint(1,100)
     move = 0
@@ -48,6 +49,20 @@ def choose_enemy_move(diff):
     return move
 
 
+def sort_speed(player, enemy):
+    order = ()
+    if player.speed > enemy.speed:
+        order = (player, enemy)
+    elif enemy.speed > player.speed:
+        order = (enemy, player)
+    else:
+        if random.randint(0,1) == 0:
+            order = (player, enemy)
+        else:
+            order = (enemy, player)
+    return order
+
+
 def battle(player):
     enemy = Enemy()
 
@@ -59,6 +74,8 @@ def battle(player):
         # calculate enemy move
         enemy_move = choose_enemy_move(enemy.difficulty)
         # determine who goes first
+        speed_order = sort_speed(player, enemy)
+        print(speed_order)
         # execute turn
         enemy.health -= 10
         player.health -= 10
