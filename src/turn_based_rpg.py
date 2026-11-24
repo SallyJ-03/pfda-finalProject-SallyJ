@@ -3,32 +3,11 @@ import sys
 
 import pygame
 import random
+import button
 
 
 WIDTH = 1080
 HEIGHT = 720
-
-
-class Button():
-
-    def __init__(self, x, y, image):
-        self.image = image
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)
-        self.clicked = False
-
-    def draw(self, surface):
-        # get mouse position
-        mouse_pos = pygame.mouse.get_pos()
-        # check mouseover and clicked conditions
-        if self.rect.collidepoint(mouse_pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                print('CLICKED')
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-
-        surface.blit(self.image, (self.rect.x, self.rect.y))
 
 
 class Entity():
@@ -131,7 +110,7 @@ def main():
 
     player = Player(health=100, attack=25, defense=25, speed=50)
     fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
-    fight_button = Button(100, 100, fight_img)
+    fight_button = button.Button(100, 100, fight_img)
 
     while True:
         for event in pygame.event.get():
@@ -139,7 +118,8 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        fight_button.draw(screen)
+        if fight_button.draw(screen):
+            print('FIGHT')
 
         #battle(player)    
 
