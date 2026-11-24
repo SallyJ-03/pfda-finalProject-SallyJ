@@ -16,6 +16,7 @@ class Entity():
         self.attack = attack
         self.defense = defense
         self.speed = speed
+        self.move = 0
 
 
 class Player(Entity):
@@ -64,11 +65,11 @@ def sort_speed(player: Player, enemy: Enemy):
 
 
 def calculate_damage(attack: int, defense: int, move: int):
-    move_damage = 50
+    move_damage = 50.0
     if move == 1:
-        move_damage = 70
+        move_damage = 70.0
     
-    dmg = int((2 * (attack / defense) * move_damage) / 50)
+    dmg = int((2.0 * (float(attack) / float(defense)) * move_damage) / 10)
     if dmg <= 0:
         dmg = 1
     
@@ -86,17 +87,14 @@ def battle(player):
         print(f"Player health: {player.health}")
         print(f"Enemy health: {enemy.health}")
         # ask for player input
-        player_move = input("fight:\n")
+        player.move = int(input("choose move: [0] Attack, [1] Str Attack"))
         # calculate enemy move
-        enemy_move = choose_enemy_move(enemy.difficulty)
+        enemy.move = choose_enemy_move(enemy.difficulty)
         # determine who goes first
-        speed_order = sort_speed(player, enemy)
+        first, second = sort_speed(player, enemy)
         # execute turn
-        execute_turn(speed_order[0], speed_order[1], 0)
-        execute_turn(speed_order[1], speed_order[0], 0)
-        
-        enemy.health -= 10
-        player.health -= 10
+        execute_turn(first, second, first.move)
+        execute_turn(second, first, second.move)
 
         # increase battle_num if a side is dead
         # switch turn and execute turn
