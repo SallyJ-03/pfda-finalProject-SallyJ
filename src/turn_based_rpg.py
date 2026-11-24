@@ -24,7 +24,7 @@ class Player(Entity):
 
 class Enemy(Entity):
 
-    def __init__(self, health=50, attack=15, defense=15, speed=50, difficulty=1):
+    def __init__(self, health=50, attack=15, defense=15, speed=50, difficulty=0):
         super().__init__(health, attack, defense, speed)
         self.difficulty = difficulty
 
@@ -32,23 +32,24 @@ def choose_enemy_move():
     return 1
 
 
-def battle():
-    battle_num = 1
-    while battle_num == 1:
-        enemy = Enemy(health=30, attack=10, defense=10, speed=50, difficulty=1)
+def battle(player):
+    enemy = Enemy()
+
+    while player.health > 0 and enemy.health > 0:
+        print(f"Player health: {player.health}")
+        print(f"Enemy health: {enemy.health}")
         # ask for player input
-        player_move = int(input("Choose your move: [1] Attack\n"))
+        player_move = input("fight:\n")
         # calculate enemy move
         enemy_move = choose_enemy_move()
         # determine who goes first
         # execute turn
-            
+        enemy.health -= 10
+        player.health -= 10
 
         # increase battle_num if a side is dead
         # switch turn and execute turn
         # increase battle_num if a side is dead
-
-        battle_num += 1
 
 
 def main():
@@ -65,7 +66,7 @@ def main():
                 pygame.quit()
                 sys.exit()
 
-        battle()    
+        battle(player)    
 
         pygame.display.flip()
         clock.tick(60)
