@@ -18,3 +18,8 @@ class Timer:
         self.start_time = 0
 
     # update function
+    def update(self):
+        if self.active:
+            current_time = get_ticks()
+            if current_time - self.start_time >= self.duration:
+                self.deactivate()
