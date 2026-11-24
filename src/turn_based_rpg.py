@@ -3,10 +3,10 @@ import sys
 
 import pygame
 import random
-import button
 
 
 from timer import Timer
+from button import Button
 
 
 WIDTH = 1080
@@ -116,9 +116,9 @@ def main():
     enemy = Enemy(difficulty=stage)
     
     fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
-    fight_button = button.Button(100, 100, fight_img)
+    fight_button = Button(100, 100, fight_img)
     retry_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
-    retry_button = button.Button(300, 300, retry_img)
+    retry_button = Button(300, 300, retry_img)
     
     while True:
         for event in pygame.event.get():
