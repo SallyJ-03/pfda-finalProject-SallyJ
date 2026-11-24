@@ -6,6 +6,9 @@ import random
 import button
 
 
+from timer import Timer
+
+
 WIDTH = 1080
 HEIGHT = 720
 
@@ -18,11 +21,13 @@ class Entity:
         self.defense = defense
         self.speed = speed
         self.move = 0
+        self.name = 'ENTITY'
 
 
 class Player(Entity):
     def __init__(self, health=100, attack=25, defense=25, speed=50):
-            super().__init__(health, attack, defense, speed)
+        super().__init__(health, attack, defense, speed)
+        self.name = 'PLAYER'
 
 
 class Enemy(Entity):
@@ -30,6 +35,7 @@ class Enemy(Entity):
     def __init__(self, health=50, attack=15, defense=15, speed=50, difficulty=0):
         super().__init__(health, attack, defense, speed)
         self.difficulty = difficulty
+        self.name = 'ENEMY'
 
 
 def choose_enemy_move(diff: int):
@@ -78,6 +84,8 @@ def calculate_damage(attack: int, defense: int, move: int):
 
 
 def execute_turn(user: Entity, target: Entity, move: int):
+    if user.name == 'ENEMY':
+        dodge_timer = Timer(1000,autostart=True)
     target.health -= calculate_damage(user.attack, target.defense, move)
 
 
@@ -109,6 +117,8 @@ def main():
     
     fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
     fight_button = button.Button(100, 100, fight_img)
+    retry_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
+    retry_button = button.Button(300, 300, retry_img)
     
     while True:
         for event in pygame.event.get():
@@ -118,12 +128,12 @@ def main():
 
         screen.fill((200, 200, 255))
 
-        if fight_button.draw(screen):
-            if player.health > 0:
-                battle(player, enemy)
-
         if player.health <= 0:
-            print("you lose")
+            retry_button.draw(screen)
+
+        elif fight_button.draw(screen):
+            battle(player, enemy)
+        
         if enemy.health <= 0:
             print("increase difficulty")
             stage += 1
