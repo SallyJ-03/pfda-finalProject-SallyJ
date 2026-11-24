@@ -1,7 +1,7 @@
 import pygame
 
 
-class Button():
+class Button:
 
     def __init__(self, x, y, image):
         self.image = image
@@ -22,7 +22,7 @@ class Button():
             self.clicked = False
 
         surface.blit(self.image, (self.rect.x, self.rect.y))
-        
+
         return action
         
 

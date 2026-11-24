@@ -10,7 +10,7 @@ WIDTH = 1080
 HEIGHT = 720
 
 
-class Entity():
+class Entity:
 
     def __init__(self, health, attack, defense, speed):
         self.health = health
