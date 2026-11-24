@@ -30,7 +30,7 @@ class Enemy(Entity):
         self.difficulty = difficulty
 
 
-def choose_enemy_move(diff):
+def choose_enemy_move(diff: int):
     move_chance = random.randint(1,100)
     move = 0
     if diff == 0:
@@ -49,7 +49,7 @@ def choose_enemy_move(diff):
     return move
 
 
-def sort_speed(player, enemy):
+def sort_speed(player: Player, enemy: Enemy):
     order = ()
     if player.speed > enemy.speed:
         order = (player, enemy)
@@ -61,6 +61,22 @@ def sort_speed(player, enemy):
         else:
             order = (enemy, player)
     return order
+
+
+def calculate_damage(attack: int, defense: int, move: int):
+    move_damage = 50
+    if move == 1:
+        move_damage = 70
+    
+    dmg = int((2 * (attack / defense) * move_damage) / 50)
+    if dmg <= 0:
+        dmg = 1
+    
+    return dmg
+
+
+def execute_turn(user: Entity, target: Entity, move: int):
+    target.health -= calculate_damage(user.attack, target.defense, move)
 
 
 def battle(player):
@@ -75,8 +91,10 @@ def battle(player):
         enemy_move = choose_enemy_move(enemy.difficulty)
         # determine who goes first
         speed_order = sort_speed(player, enemy)
-        print(speed_order)
         # execute turn
+        execute_turn(speed_order[0], speed_order[1], 0)
+        execute_turn(speed_order[1], speed_order[0], 0)
+        
         enemy.health -= 10
         player.health -= 10
 
