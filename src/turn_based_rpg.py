@@ -9,6 +9,17 @@ WIDTH = 1080
 HEIGHT = 720
 
 
+class Button():
+
+    def __init__(self, x, y, image):
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+    def draw(self, surface):
+        surface.blit(self.image, (self.rect.x, self.rect.y))
+
+
 class Entity():
 
     def __init__(self, health, attack, defense, speed):
@@ -108,6 +119,8 @@ def main():
     pygame.display.set_caption("Turn-based RPG")
 
     player = Player(health=100, attack=25, defense=25, speed=50)
+    fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
+    fight_button = Button(100, 100, fight_img)
 
     while True:
         for event in pygame.event.get():
