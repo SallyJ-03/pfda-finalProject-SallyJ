@@ -81,25 +81,20 @@ def execute_turn(user: Entity, target: Entity, move: int):
     target.health -= calculate_damage(user.attack, target.defense, move)
 
 
-def battle(player):
-    enemy = Enemy()
+def battle(player: Player, enemy: Enemy):
+    print(f"Player health: {player.health}")
+    print(f"Enemy health: {enemy.health}")
 
-    while player.health > 0 and enemy.health > 0:
-        print(f"Player health: {player.health}")
-        print(f"Enemy health: {enemy.health}")
-        # ask for player input
-        player.move = int(input("choose move: [0] Attack, [1] Str Attack"))
-        # calculate enemy move
-        enemy.move = choose_enemy_move(enemy.difficulty)
-        # determine who goes first
-        first, second = sort_speed(player, enemy)
-        # execute turn
-        execute_turn(first, second, first.move)
-        execute_turn(second, first, second.move)
+    player.move = 0
+    enemy.move = choose_enemy_move(enemy.difficulty)
+    first, second = sort_speed(player, enemy)
+    execute_turn(first, second, first.move)
+    if second.health <= 0:
+        return
+    execute_turn(second, first, second.move)
+    if first.health <= 0:
+        return
 
-        # increase battle_num if a side is dead
-        # switch turn and execute turn
-        # increase battle_num if a side is dead
 
 
 def main():
@@ -108,20 +103,27 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Turn-based RPG")
 
-    player = Player(health=100, attack=25, defense=25, speed=50)
+    player = Player()
+    stage = 0
+    enemy = Enemy(difficulty=stage)
+    
     fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
     fight_button = button.Button(100, 100, fight_img)
-
+    
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
-        if fight_button.draw(screen):
-            print('FIGHT')
+        screen.fill((200, 200, 255))
 
-        #battle(player)    
+        if fight_button.draw(screen):
+            if player.health > 0:
+                battle(player, enemy)
+
+        if player.health <= 0:
+            print("you lose")
 
         pygame.display.flip()
         clock.tick(60)
