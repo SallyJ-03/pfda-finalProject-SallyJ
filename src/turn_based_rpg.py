@@ -5,8 +5,7 @@ import pygame
 
 
 from button import Button
-from timer import Timer
-import battle
+from battle import Battle
 import entity
 
 
@@ -34,21 +33,7 @@ class Health_Bar:
         self.draw(surface)
 
 
-def use_item(player: entity.Player):
-    if player.item_count > 0:
-        player.item_count -= 1
-        player.update_health(player.health + 20)
-        if player.health > 100:
-            player.update_health(100)
-    else:
-        print("No more items left!")
-
-
 def draw_text(text, x, y, surface):
-    # font var
-    # text color var
-    # make the text
-    # blit onto screen
     font = pygame.font.SysFont('arialblack', 30)
     TEXT_COL = (0, 0, 0)
 
@@ -65,10 +50,7 @@ def main():
 
     player = entity.Player()
     stage = 0
-    enemy = entity.Enemy(difficulty=stage)
-    in_action = False
-    turn_count = 0
-    dodge_timer = Timer(1000)    
+    battle = Battle(player, stage)
 
     fight_button_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
     fight_button = Button(100, 100, fight_button_img)
@@ -78,7 +60,7 @@ def main():
     retry_button = Button(300, 300, retry_button_img)
 
     player_hp_bar = Health_Bar(100, 500, 300, 40, player.max_health)
-    enemy_hp_bar = Health_Bar(500, 500, 300, 40, enemy.max_health)
+    enemy_hp_bar = Health_Bar(500, 500, 300, 40, battle.enemy.max_health)
 
     
     while True:
@@ -87,61 +69,51 @@ def main():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE and dodge_timer.active:
-                    in_action = False
-                    dodge_timer.deactivate()
+                if event.key == pygame.K_SPACE and battle.dodge_timer.active:
+                    battle.in_action = False
+                    battle.dodge_timer.deactivate()
                     print("DODGED")
 
-        dodge_timer.update()
+        battle.dodge_timer.update()
 
         screen.fill((200, 200, 255))
+        player.update(battle.player.health, battle.player.item_count)
         player_hp_bar.update(screen, player.health)
-        enemy_hp_bar.update(screen, enemy.health)
+        enemy_hp_bar.update(screen, battle.enemy.health)
 
         draw_text(f"items left: {player.item_count}", 0, 0, screen)
 
         if player.health <= 0:
             retry_button.draw(screen)
 
-        elif enemy.health <= 0:
+        elif battle.enemy.health <= 0:
             stage += 1
             if stage > 4:
                 print("you win")
             else:
-                print("increase difficulty")
-                enemy = entity.Enemy(difficulty=stage)
-            in_action = False
+                print(f"stage {stage}")
+                battle = Battle(player, stage)
+            battle.in_action = False
 
-        elif dodge_timer.active:
+        elif battle.dodge_timer.active:
+            # dodge animation
             pass
 
-        elif in_action:
-            if turn_count == 0:
-                enemy.update_health(battle.execute_turn(player, enemy, player.move))
-                turn_count += 1
-            elif turn_count == 1:
-                dodge_timer.activate()
-                print("timer")
-                turn_count += 1
+        elif battle.in_action:
+            print(battle.in_action)
+            if battle.turn_count == 0:
+                battle.execute_turn('PLAYER')
+            elif battle.turn_count == 1:
+                battle.start_dodge_timer()
             else:
-                player.update_health(battle.execute_turn(enemy, player, enemy.move))
-                in_action = False
-                turn_count = 0
+                battle.execute_turn('ENEMY')
+                player.update(battle.player.health, battle.player.item_count)
 
         elif fight_button.draw(screen):
-            print(f"Player health: {player.health}")
-            print(f"Enemy health: {enemy.health}")
-            player.move = 0
-            enemy.move = battle.choose_enemy_move(enemy.difficulty)
-            in_action = True
-            turn_count = 0
+            battle.set_up_turns(player_move=0)
 
         elif item_button.draw(screen):
-            use_item(player)
-            player.move = -1
-            enemy.move = battle.choose_enemy_move(enemy.difficulty)
-            in_action = True
-            turn_count = 0
+            battle.set_up_turns(player_move=2)
 
 
         pygame.display.flip()
