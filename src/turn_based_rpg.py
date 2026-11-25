@@ -54,7 +54,8 @@ def main():
     retry_button_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
     retry_button = Button(300, 300, retry_button_img)
 
-    health_bar = Health_Bar(200, 500, 300, 40, player.max_health)
+    player_hp_bar = Health_Bar(100, 500, 300, 40, player.max_health)
+    enemy_hp_bar = Health_Bar(500, 500, 300, 40, enemy.max_health)
 
     
     while True:
@@ -71,7 +72,8 @@ def main():
         dodge_timer.update()
 
         screen.fill((200, 200, 255))
-        health_bar.update(screen, player.health)
+        player_hp_bar.update(screen, player.health)
+        enemy_hp_bar.update(screen, enemy.health)
 
         if player.health <= 0:
             retry_button.draw(screen)
