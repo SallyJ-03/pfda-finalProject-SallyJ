@@ -51,16 +51,23 @@ def main():
     player = entity.Player()
     stage = 0
     battle = Battle(player, stage)
+    screen_state = 'GAME'
+
+    battle_background = pygame.image.load('ui_img/battle_bkground_temp.png').convert_alpha()
 
     fight_button_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
-    fight_button = Button(100, 100, fight_button_img)
+    fight_button = Button(10, 474, fight_button_img,scale=1)
+    heavy_button_img = pygame.image.load('ui_img/heavy_att_button_temp.png').convert_alpha()
+    heavy_button = Button(10, 597, heavy_button_img, scale=1)
     item_button_img = pygame.image.load('ui_img/item_button_temp.png').convert_alpha()
-    item_button = Button(600, 100, item_button_img)
+    item_button = Button(561, 474, item_button_img,scale=1)
+    menu_button_img = pygame.image.load('ui_img/menu_button_temp.png').convert_alpha()
+    menu_button = Button(561, 597, menu_button_img, scale=1)
     retry_button_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
-    retry_button = Button(300, 300, retry_button_img)
+    retry_button = Button(300, 300, retry_button_img,scale=1)
 
-    player_hp_bar = Health_Bar(100, 500, 300, 40, player.max_health)
-    enemy_hp_bar = Health_Bar(500, 500, 300, 40, battle.enemy.max_health)
+    player_hp_bar = Health_Bar(10, 10, 450, 50, player.max_health)
+    enemy_hp_bar = Health_Bar(620, 10, 450, 50, battle.enemy.max_health)
 
     
     while True:
@@ -74,46 +81,54 @@ def main():
                     battle.dodge_timer.deactivate()
                     print("DODGED")
 
-        battle.dodge_timer.update()
-
         screen.fill((200, 200, 255))
-        player.update(battle.player.health, battle.player.item_count)
-        player_hp_bar.update(screen, player.health)
-        enemy_hp_bar.update(screen, battle.enemy.health)
 
-        draw_text(f"items left: {player.item_count}", 0, 0, screen)
+        if screen_state == 'GAME':
 
-        if player.health <= 0:
+            screen.blit(battle_background)
+
+            battle.dodge_timer.update()
+            player.update(battle.player.health, battle.player.item_count)
+            player_hp_bar.update(screen, player.health)
+            enemy_hp_bar.update(screen, battle.enemy.health)
+
+            draw_text(f"items left: {player.item_count}", 0, 365, screen)
+
+            if player.health <= 0:
+                screen_state = 'GAME_OVER'
+            elif battle.enemy.health <= 0:
+                stage += 1
+                if stage > 4:
+                    print("you win")
+                else:
+                    print(f"stage {stage}")
+                    battle = Battle(player, stage)
+                battle.in_action = False
+
+            elif battle.dodge_timer.active:
+                # dodge animation
+                pass
+
+            elif battle.in_action:
+                if battle.turn_count == 0:
+                    battle.execute_turn('PLAYER')
+                elif battle.turn_count == 1:
+                    battle.start_dodge_timer()
+                else:
+                    battle.execute_turn('ENEMY')
+                    player.update(battle.player.health, battle.player.item_count)
+
+            elif fight_button.draw(screen):
+                battle.set_up_turns(player_move=0)
+            elif heavy_button.draw(screen):
+                pass
+            elif item_button.draw(screen):
+                battle.set_up_turns(player_move=2)
+            elif menu_button.draw(screen):
+                pass
+
+        elif screen_state == 'GAME_OVER':
             retry_button.draw(screen)
-
-        elif battle.enemy.health <= 0:
-            stage += 1
-            if stage > 4:
-                print("you win")
-            else:
-                print(f"stage {stage}")
-                battle = Battle(player, stage)
-            battle.in_action = False
-
-        elif battle.dodge_timer.active:
-            # dodge animation
-            pass
-
-        elif battle.in_action:
-            print(battle.in_action)
-            if battle.turn_count == 0:
-                battle.execute_turn('PLAYER')
-            elif battle.turn_count == 1:
-                battle.start_dodge_timer()
-            else:
-                battle.execute_turn('ENEMY')
-                player.update(battle.player.health, battle.player.item_count)
-
-        elif fight_button.draw(screen):
-            battle.set_up_turns(player_move=0)
-
-        elif item_button.draw(screen):
-            battle.set_up_turns(player_move=2)
 
 
         pygame.display.flip()
