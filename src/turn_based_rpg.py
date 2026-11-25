@@ -34,6 +34,14 @@ class Health_Bar:
         self.draw(surface)
 
 
+def draw_text(text, x, y):
+    # font var
+    # text color var
+    # make the text
+    # blit onto screen
+    pass
+
+
 def main():
     pygame.init()
     clock = pygame.time.Clock()
