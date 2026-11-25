@@ -14,11 +14,6 @@ WIDTH = 1080
 HEIGHT = 720
 
 
-# health bar class
-# init
-# draw
-# calculate ratio
-# draw two rects on top of each other
 class Health_Bar:
 
     def __init__(self, x, y, w, h, max_hp):
@@ -33,6 +28,10 @@ class Health_Bar:
         ratio = self.hp / self.max_hp
         pygame.draw.rect(surface, color='red', rect=(self.x, self.y, self.w, self.h))
         pygame.draw.rect(surface, color='green', rect=(self.x, self.y, self.w * ratio, self.h))
+
+    def update(self, surface, new_hp):
+        self.hp = new_hp
+        self.draw(surface)
 
 
 def main():
@@ -72,7 +71,7 @@ def main():
         dodge_timer.update()
 
         screen.fill((200, 200, 255))
-        health_bar.draw(screen)
+        health_bar.update(screen, player.health)
 
         if player.health <= 0:
             retry_button.draw(screen)
