@@ -85,6 +85,7 @@ def main():
             else:
                 print("increase difficulty")
                 enemy = entity.Enemy(difficulty=stage)
+            in_action = False
 
         elif dodge_timer.active:
             pass
@@ -115,6 +116,7 @@ def main():
             player.update_health(player.health + 20)
             if player.health > 100:
                 player.update_health(100)
+            player.move = -1
             enemy.move = battle.choose_enemy_move(enemy.difficulty)
             in_action = True
             turn_count = 0

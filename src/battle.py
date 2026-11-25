@@ -34,5 +34,7 @@ def calculate_damage(attack: int, defense: int, move: int):
 
 
 def execute_turn(user: entity.Entity, target: entity.Entity, move):
-    dmg = calculate_damage(user.attack, target.defense, move)
+    dmg = 0
+    if move >= 0:
+        dmg = calculate_damage(user.attack, target.defense, move)
     return target.health - dmg
