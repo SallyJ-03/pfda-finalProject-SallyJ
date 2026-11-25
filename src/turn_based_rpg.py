@@ -110,6 +110,7 @@ def main():
                 else:
                     print(f"stage {stage}")
                     battle = Battle(player, stage)
+                    enemy_hp_bar.max_hp = battle.enemy.max_health
                 battle.in_action = False
 
             elif battle.dodge_timer.active:

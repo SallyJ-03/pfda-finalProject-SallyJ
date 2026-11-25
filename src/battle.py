@@ -8,7 +8,17 @@ from timer import Timer
 class Battle:
 
     def __init__(self, player: entity.Player, stage):
-        self.enemy = entity.Enemy(difficulty=stage)
+        match stage:
+            case 0:
+                self.enemy = entity.Enemy()
+            case 1:
+                self.enemy = entity.Enemy(max_health=75, attack=20, defense=20, difficulty=stage)
+            case 2:
+                self.enemy = entity.Enemy(max_health=100, attack=25, defense=25, difficulty=stage)
+            case 3:
+                self.enemy = entity.Enemy(max_health=130, attack=30, defense=30, difficulty=stage)
+            case 4:
+                self.enemy = entity.Enemy(max_health=150, attack=35, defense=35, difficulty=stage)
         self.player = player
         self.turn_count = 0
         self.dodge_timer = Timer(500)
