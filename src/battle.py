@@ -24,6 +24,8 @@ class Battle:
         self.dodge_timer = Timer(500)
         self.in_action = False
 
+        self.damage = 0
+
 
     def __choose_enemy_move__(self, diff: int):
         move_chance = random.randint(1,100)
@@ -51,7 +53,6 @@ class Battle:
         dmg = int((2.0 * (float(attack) / float(defense)) * move_damage) / 10)
         if dmg <= 0:
             dmg = 1
-        
         return dmg
 
     def use_item(self):
@@ -79,11 +80,13 @@ class Battle:
             self.turn_count = 1
             if self.player.move == 2:
                 self.use_item()
+                self.damage = -1
             else:
-                dmg = self.__calculate_damage__(self.player.attack, self.enemy.defense, self.player.move)
-                self.enemy.health -= dmg
+                self.damage = self.__calculate_damage__(self.player.attack, self.enemy.defense, self.player.move)
+                self.enemy.health -= self.damage
+
         elif turn == 'ENEMY':
             self.turn_count = 0
-            dmg = self.__calculate_damage__(self.enemy.attack, self.player.defense, self.enemy.move)
-            self.player.health -= dmg
+            self.damage = self.__calculate_damage__(self.enemy.attack, self.player.defense, self.enemy.move)
+            self.player.health -= self.damage
             self.in_action = False

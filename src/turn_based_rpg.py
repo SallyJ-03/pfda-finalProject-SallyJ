@@ -6,6 +6,7 @@ import pygame
 
 from button import Button
 from battle import Battle
+from text_particle import Text_Particle
 import entity
 
 
@@ -39,12 +40,12 @@ def draw_text(text, x, y, surface):
 
     img = font.render(text, True, TEXT_COL)
     surface.blit(img, (x, y))
-    pass
 
 
 def main():
     pygame.init()
     clock = pygame.time.Clock()
+    dt = 0
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Turn-based RPG")
 
@@ -76,6 +77,8 @@ def main():
     player_hp_bar = Health_Bar(10, 10, 450, 50, player.max_health)
     enemy_hp_bar = Health_Bar(620, 10, 450, 50, battle.enemy.max_health)
 
+    text_particles = Text_Particle()
+
     
     while True:
         for event in pygame.event.get():
@@ -87,6 +90,8 @@ def main():
                     battle.in_action = False
                     battle.dodge_timer.deactivate()
                     print("DODGED")
+
+        text_particles.update(dt)
 
         screen.fill((200, 200, 255))
 
@@ -120,10 +125,12 @@ def main():
             elif battle.in_action:
                 if battle.turn_count == 0:
                     battle.execute_turn('PLAYER')
+                    text_particles.add(battle.damage, (800, 300))
                 elif battle.turn_count == 1:
                     battle.start_dodge_timer()
                 else:
                     battle.execute_turn('ENEMY')
+                    text_particles.add(battle.damage, (200, 300))
                     player.update(battle.player.health, battle.player.item_count)
 
             elif fight_button.draw(screen):
@@ -151,9 +158,10 @@ def main():
                 pygame.quit()
                 sys.exit()
 
+        text_particles.draw(screen)
 
         pygame.display.flip()
-        clock.tick(60)
+        dt = clock.tick(60)
 
 
 if __name__ == "__main__":
