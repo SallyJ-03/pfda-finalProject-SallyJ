@@ -20,10 +20,12 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Turn-based RPG")
 
-    fight_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
-    fight_button = Button(100, 100, fight_img)
-    retry_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
-    retry_button = Button(300, 300, retry_img)
+    fight_button_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
+    fight_button = Button(100, 100, fight_button_img)
+    item_button_img = pygame.image.load('ui_img/item_button_temp.png').convert_alpha()
+    item_button = Button(600, 100, item_button_img)
+    retry_button_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
+    retry_button = Button(300, 300, retry_button_img)
 
     player = entity.Player()
     stage = 0
@@ -60,7 +62,7 @@ def main():
                 enemy = entity.Enemy(difficulty=stage)
 
         elif dodge_timer.active:
-            print("player can dodge")
+            pass
 
         elif in_action:
             if turn_count == 0:
@@ -87,6 +89,14 @@ def main():
         # remove one item from player's item count
         # heal player health
         # if player health is over max health, set health to max health (100)
+        elif item_button.draw(screen):
+            player.item_count -= 1
+            player.update_health(player.health + 20)
+            if player.health > 100:
+                player.update_health(100)
+            enemy.move = battle.choose_enemy_move(enemy.difficulty)
+            in_action = True
+            turn_count = 0
 
 
         pygame.display.flip()
