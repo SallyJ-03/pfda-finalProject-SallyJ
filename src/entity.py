@@ -15,7 +15,6 @@ class Player(Entity):
     def __init__(self, health=100, attack=25, defense=25):
         super().__init__(health, attack, defense)
         self.name = 'PLAYER'
-        # item count
         self.item_count = 5
 
 

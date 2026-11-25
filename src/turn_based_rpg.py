@@ -14,6 +14,13 @@ WIDTH = 1080
 HEIGHT = 720
 
 
+# health bar class
+# init
+# draw
+# calculate ratio
+# draw two rects on top of each other
+
+
 def main():
     pygame.init()
     clock = pygame.time.Clock()
@@ -85,10 +92,6 @@ def main():
             in_action = True
             turn_count = 0
 
-        # item button conditional
-        # remove one item from player's item count
-        # heal player health
-        # if player health is over max health, set health to max health (100)
         elif item_button.draw(screen):
             player.item_count -= 1
             player.update_health(player.health + 20)
