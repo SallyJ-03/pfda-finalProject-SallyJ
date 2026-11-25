@@ -34,11 +34,16 @@ class Health_Bar:
         self.draw(surface)
 
 
-def draw_text(text, x, y):
+def draw_text(text, x, y, surface):
     # font var
     # text color var
     # make the text
     # blit onto screen
+    font = pygame.font.SysFont('arialblack', 30)
+    TEXT_COL = (0, 0, 0)
+
+    img = font.render(text, True, TEXT_COL)
+    surface.blit(img, (x, y))
     pass
 
 
@@ -82,6 +87,8 @@ def main():
         screen.fill((200, 200, 255))
         player_hp_bar.update(screen, player.health)
         enemy_hp_bar.update(screen, enemy.health)
+
+        draw_text("Temp text", 0, 0, screen)
 
         if player.health <= 0:
             retry_button.draw(screen)
