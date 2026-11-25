@@ -34,6 +34,16 @@ class Health_Bar:
         self.draw(surface)
 
 
+def use_item(player: entity.Player):
+    if player.item_count > 0:
+        player.item_count -= 1
+        player.update_health(player.health + 20)
+        if player.health > 100:
+            player.update_health(100)
+    else:
+        print("No more items left!")
+
+
 def draw_text(text, x, y, surface):
     # font var
     # text color var
@@ -88,7 +98,7 @@ def main():
         player_hp_bar.update(screen, player.health)
         enemy_hp_bar.update(screen, enemy.health)
 
-        draw_text("Temp text", 0, 0, screen)
+        draw_text(f"items left: {player.item_count}", 0, 0, screen)
 
         if player.health <= 0:
             retry_button.draw(screen)
@@ -127,10 +137,7 @@ def main():
             turn_count = 0
 
         elif item_button.draw(screen):
-            player.item_count -= 1
-            player.update_health(player.health + 20)
-            if player.health > 100:
-                player.update_health(100)
+            use_item(player)
             player.move = -1
             enemy.move = battle.choose_enemy_move(enemy.difficulty)
             in_action = True
