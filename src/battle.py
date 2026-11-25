@@ -65,13 +65,12 @@ class Battle:
         self.in_action = True
 
     def execute_turn(self, turn):
-        dmg = 0
         if turn == 'PLAYER':
             self.turn_count = 1
             if self.player.move == 2:
                 self.use_item()
             else:
-                dmg = self.__calculate_damage__(self.player.attack, self.enemy.defense, 0)
+                dmg = self.__calculate_damage__(self.player.attack, self.enemy.defense, self.player.move)
                 self.enemy.health -= dmg
         elif turn == 'ENEMY':
             self.turn_count = 0

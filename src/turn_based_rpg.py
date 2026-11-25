@@ -54,6 +54,7 @@ def main():
     screen_state = 'GAME'
 
     battle_background = pygame.image.load('ui_img/battle_bkground_temp.png').convert_alpha()
+    menu_background = pygame.image.load('ui_img/menu_bkground_temp.png').convert_alpha()
 
     fight_button_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
     fight_button = Button(10, 474, fight_button_img,scale=1)
@@ -63,8 +64,14 @@ def main():
     item_button = Button(561, 474, item_button_img,scale=1)
     menu_button_img = pygame.image.load('ui_img/menu_button_temp.png').convert_alpha()
     menu_button = Button(561, 597, menu_button_img, scale=1)
+
     retry_button_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
     retry_button = Button(300, 300, retry_button_img,scale=1)
+
+    resume_button_img = pygame.image.load('ui_img/resume_button_temp.png').convert_alpha()
+    resume_button = Button(100, 100, resume_button_img, scale=1)
+    quit_button_img = pygame.image.load('ui_img/quit_button_temp.png').convert_alpha()
+    quit_button = Button(100, 500, quit_button_img, scale=1)
 
     player_hp_bar = Health_Bar(10, 10, 450, 50, player.max_health)
     enemy_hp_bar = Health_Bar(620, 10, 450, 50, battle.enemy.max_health)
@@ -121,14 +128,27 @@ def main():
             elif fight_button.draw(screen):
                 battle.set_up_turns(player_move=0)
             elif heavy_button.draw(screen):
-                pass
+                battle.set_up_turns(player_move=1)
             elif item_button.draw(screen):
                 battle.set_up_turns(player_move=2)
             elif menu_button.draw(screen):
-                pass
+                screen_state = 'MENU'
 
         elif screen_state == 'GAME_OVER':
-            retry_button.draw(screen)
+            if retry_button.draw(screen):
+                player = entity.Player()
+                stage = 0
+                battle = Battle(player, stage)
+                screen_state = 'GAME'
+
+        elif screen_state == 'MENU':
+            screen.blit(menu_background)
+
+            if resume_button.draw(screen):
+                screen_state = 'GAME'
+            elif quit_button.draw(screen):
+                pygame.quit()
+                sys.exit()
 
 
         pygame.display.flip()
