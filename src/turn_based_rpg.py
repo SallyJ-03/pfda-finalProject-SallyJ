@@ -19,6 +19,20 @@ HEIGHT = 720
 # draw
 # calculate ratio
 # draw two rects on top of each other
+class Health_Bar:
+
+    def __init__(self, x, y, w, h, max_hp):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.hp = max_hp
+        self.max_hp = max_hp
+
+    def draw(self, surface):
+        ratio = self.hp / self.max_hp
+        pygame.draw.rect(surface, color='red', rect=(self.x, self.y, self.w, self.h))
+        pygame.draw.rect(surface, color='green', rect=(self.x, self.y, self.w * ratio, self.h))
 
 
 def main():
@@ -27,6 +41,13 @@ def main():
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Turn-based RPG")
 
+    player = entity.Player()
+    stage = 0
+    enemy = entity.Enemy(difficulty=stage)
+    in_action = False
+    turn_count = 0
+    dodge_timer = Timer(1000)    
+
     fight_button_img = pygame.image.load('ui_img/fight_button_temp.png').convert_alpha()
     fight_button = Button(100, 100, fight_button_img)
     item_button_img = pygame.image.load('ui_img/item_button_temp.png').convert_alpha()
@@ -34,12 +55,8 @@ def main():
     retry_button_img = pygame.image.load('ui_img/retry_button_temp.png').convert_alpha()
     retry_button = Button(300, 300, retry_button_img)
 
-    player = entity.Player()
-    stage = 0
-    enemy = entity.Enemy(difficulty=stage)
-    in_action = False
-    turn_count = 0
-    dodge_timer = Timer(1000)
+    health_bar = Health_Bar(200, 500, 300, 40, player.max_health)
+
     
     while True:
         for event in pygame.event.get():
@@ -55,7 +72,7 @@ def main():
         dodge_timer.update()
 
         screen.fill((200, 200, 255))
-
+        health_bar.draw(screen)
 
         if player.health <= 0:
             retry_button.draw(screen)
