@@ -3,21 +3,39 @@ import pygame
 
 class Text:
 
-    def __init__(self, text="", pos=(), color=pygame.Color(255, 255, 255)):
+    def __init__(self, text="", pos='', type=0):
         self.text = text
-        self.pos = pos
+        self.pos = self._set_pos_(pos)
         self.life = 500
         self.age = 0
         self.dead = False
         self.alpha = 255
-        self.color = color
+        self.color = self._set_color_(type)
+
+    def _set_color_(self, type):
+        color = pygame.Color(255, 255, 255)
+        if type == 1:
+            color = pygame.Color(255, 255, 0)
+        if type == 2:
+            color = pygame.Color(0, 255, 0)
+
+        return color
+
+    def _set_pos_(self, location):
+        pos = ()
+        if location == 'PLAYER':
+            pos = (200, 300)
+        elif location == 'ENEMY':
+            pos = (800, 300)
+
+        return pos
 
     def draw(self, surface):
         if self.dead:
             return
         
         font = pygame.font.SysFont('arialblack', 30)
-        TEXT_COL = (0, 0, 0)
+        TEXT_COL = self.color
 
         img = font.render(self.text, True, TEXT_COL)
         img.set_alpha(self.alpha)
@@ -47,11 +65,9 @@ class Text_Particle:
             if particle.dead:
                 del self.particles[idx]
 
-    def add(self, text, pos=(), color=pygame.Color(255, 255, 255)):
+    def add(self, text, pos='', type=0):
         text = str(text)
-        if text == '-1':
-            text = ''
-        particle = Text(text, pos, color)
+        particle = Text(text, pos, type)
         self.particles.insert(0, particle)
 
     def draw(self, surface):

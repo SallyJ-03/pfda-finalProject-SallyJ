@@ -25,9 +25,10 @@ class Battle:
         self.in_action = False
 
         self.damage = 0
+        self.heal_value = 20
 
 
-    def __choose_enemy_move__(self, diff: int):
+    def _choose_enemy_move_(self, diff: int):
         move_chance = random.randint(1,100)
         move = 0
         if diff == 0:
@@ -45,7 +46,7 @@ class Battle:
             move = 1
         return move    
 
-    def __calculate_damage__(self, attack: int, defense: int, move: int):
+    def _calculate_damage_(self, attack: int, defense: int, move: int):
         move_damage = 50.0
         if move == 1:
             move_damage = 70.0
@@ -55,38 +56,41 @@ class Battle:
             dmg = 1
         return dmg
 
-    def use_item(self):
-        if self.player.item_count > 0:
-            self.player.health += 20
-            self.player.item_count -= 1
-        else:
-            print("no more items left!")
+    def _use_item_(self):
+        self.player.health += self.heal_value
+        self.player.item_count -= 1
 
         if self.player.health > self.player.max_health:
             self.player.health = self.player.max_health
 
     def start_dodge_timer(self):
         self.dodge_timer.activate()
-        self.turn_count = 2
+        self.turn_count += 1
 
     def set_up_turns(self, player_move):
         self.player.move = player_move
-        self.enemy.move = self.__choose_enemy_move__(self.enemy.difficulty)
+        self.enemy.move = self._choose_enemy_move_(self.enemy.difficulty)
         self.turn_count = 0
         self.in_action = True
 
     def execute_turn(self, turn):
         if turn == 'PLAYER':
-            self.turn_count = 1
+            self.turn_count += 1
             if self.player.move == 2:
-                self.use_item()
-                self.damage = -1
+                before_heal = self.player.health
+                self._use_item_()
+                self.damage = self.player.health - before_heal
             else:
-                self.damage = self.__calculate_damage__(self.player.attack, self.enemy.defense, self.player.move)
+                self.damage = self._calculate_damage_(self.player.attack, self.enemy.defense, self.player.move)
+                if self.damage > self.enemy.health:
+                    self.damage = self.enemy.health
                 self.enemy.health -= self.damage
-
+                
         elif turn == 'ENEMY':
             self.turn_count = 0
-            self.damage = self.__calculate_damage__(self.enemy.attack, self.player.defense, self.enemy.move)
+            self.damage = self._calculate_damage_(self.enemy.attack, self.player.defense, self.enemy.move)
+            if self.damage > self.player.health:
+                self.damage = self.player.health
             self.player.health -= self.damage
             self.in_action = False
+            

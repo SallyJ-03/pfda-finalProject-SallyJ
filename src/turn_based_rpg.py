@@ -100,7 +100,7 @@ def main():
             screen.blit(battle_background)
 
             battle.dodge_timer.update()
-            player.update(battle.player.health, battle.player.item_count)
+            player.update(battle.player)
             player_hp_bar.update(screen, player.health)
             enemy_hp_bar.update(screen, battle.enemy.health)
 
@@ -108,6 +108,7 @@ def main():
 
             if player.health <= 0:
                 screen_state = 'GAME_OVER'
+                battle.in_action = False
             elif battle.enemy.health <= 0:
                 stage += 1
                 if stage > 4:
@@ -125,13 +126,15 @@ def main():
             elif battle.in_action:
                 if battle.turn_count == 0:
                     battle.execute_turn('PLAYER')
-                    text_particles.add(battle.damage, (800, 300))
+                    location = 'ENEMY'
+                    if player.move == 2:
+                        location = 'PLAYER'
+                    text_particles.add(battle.damage, location, player.move)
                 elif battle.turn_count == 1:
                     battle.start_dodge_timer()
                 else:
                     battle.execute_turn('ENEMY')
-                    text_particles.add(battle.damage, (200, 300))
-                    player.update(battle.player.health, battle.player.item_count)
+                    text_particles.add(battle.damage, 'PLAYER', battle.enemy.move)
 
             elif fight_button.draw(screen):
                 battle.set_up_turns(player_move=0)
@@ -139,6 +142,9 @@ def main():
                 battle.set_up_turns(player_move=1)
             elif item_button.draw(screen):
                 battle.set_up_turns(player_move=2)
+                if player.item_count <= 0:
+                    print("no more items")
+                    battle.in_action = False
             elif menu_button.draw(screen):
                 screen_state = 'MENU'
 
@@ -157,6 +163,7 @@ def main():
             elif quit_button.draw(screen):
                 pygame.quit()
                 sys.exit()
+
 
         text_particles.draw(screen)
 

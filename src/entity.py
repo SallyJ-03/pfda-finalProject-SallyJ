@@ -8,9 +8,6 @@ class Entity:
         self.move = 0
         self.name = 'ENTITY'
 
-    def update(self, new_health):
-        self.health = new_health
-
 
 class Player(Entity):
     def __init__(self, max_health=100, attack=25, defense=25):
@@ -18,9 +15,10 @@ class Player(Entity):
         self.name = 'PLAYER'
         self.item_count = 5
 
-    def update(self, new_health, item_count):
-        super().update(new_health)
-        self.item_count = item_count
+    def update(self, new_stats: Player):
+        self.health = new_stats.health
+        self.item_count = new_stats.item_count
+        self.move = new_stats.move
 
 
 class Enemy(Entity):
