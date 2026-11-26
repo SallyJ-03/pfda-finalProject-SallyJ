@@ -34,8 +34,8 @@ class Health_Bar:
         self.draw(surface)
 
 
-def draw_text(text, x, y, surface):
-    font = pygame.font.SysFont('arialblack', 30)
+def draw_text(text, x, y, surface, scale=1):
+    font = pygame.font.SysFont('arialblack', int(30*scale))
     TEXT_COL = (0, 0, 0)
 
     img = font.render(text, True, TEXT_COL)
@@ -50,7 +50,7 @@ def main():
     pygame.display.set_caption("Turn-based RPG")
 
     player = entity.Player()
-    stage = 0
+    stage = 4
     battle = Battle(player, stage)
     screen_state = 'GAME'
 
@@ -89,7 +89,7 @@ def main():
                 if event.key == pygame.K_SPACE and battle.dodge_timer.active:
                     battle.in_action = False
                     battle.dodge_timer.deactivate()
-                    print("DODGED")
+                    text_particles.add("DODGED", 'PLAYER')
 
         text_particles.update(dt)
 
@@ -105,6 +105,7 @@ def main():
             enemy_hp_bar.update(screen, battle.enemy.health)
 
             draw_text(f"items left: {player.item_count}", 0, 365, screen)
+            draw_text(f"stage {stage}", 475, 10, screen)
 
             if player.health <= 0:
                 screen_state = 'GAME_OVER'
@@ -112,9 +113,8 @@ def main():
             elif battle.enemy.health <= 0:
                 stage += 1
                 if stage > 4:
-                    print("you win")
+                    screen_state = 'GAME_WIN'
                 else:
-                    print(f"stage {stage}")
                     battle = Battle(player, stage)
                     enemy_hp_bar.max_hp = battle.enemy.max_health
                 battle.in_action = False
@@ -154,6 +154,15 @@ def main():
                 stage = 0
                 battle = Battle(player, stage)
                 screen_state = 'GAME'
+
+        elif screen_state == 'GAME_WIN':
+            screen.fill(pygame.Color(200, 200, 255))
+            draw_text("YOU WIN", 300, 200, screen, 3)
+            if retry_button.draw(screen):
+                player = entity.Player()
+                stage = 0
+                battle = Battle(player, stage)
+                screen_state = 'GAME'                
 
         elif screen_state == 'MENU':
             screen.blit(menu_background)
